@@ -67,6 +67,9 @@ body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit
 .fld input[type=text],.fld input[type=password],.fld select{font-size:1.4rem;padding:.6rem .8rem;border:1px solid #bbb;border-radius:.6rem;min-width:20rem;max-width:100%;background:#fff;color:var(--k)}
 .fld input[type=checkbox]{width:2rem;height:2rem}
 .hint{font-size:1.15rem;color:#777;margin:.2rem 0 .4rem}
+.tlist{display:flex;flex-direction:column;gap:.5rem;margin:.2rem 0 .8rem;max-width:44rem}
+.topt{justify-content:flex-start;border:1px solid #bbb;border-radius:.8rem;padding:.9rem 1.2rem;font-size:1.5rem;background:#fff;white-space:normal}
+.topt.on{background:var(--y);border:.2rem solid var(--k);font-weight:700}
 .pin{display:grid;grid-template-columns:repeat(3,7rem);gap:.8rem;justify-content:center;margin-top:1rem}
 .pin .k{height:5rem;border:1px solid #bbb;border-radius:.8rem;font-size:2.2rem;font-weight:700;background:#fff}
 .dots{font-size:3rem;letter-spacing:1rem;text-align:center;min-height:3.6rem}
@@ -377,7 +380,8 @@ function renderSettings(body){
   <div class="fld"><label for="tok">API-Token</label><input type="password" id="tok" autocomplete="off" placeholder="${cfg.token ? "gespeichert – zum Ändern neu einfügen" : "aus Kickertool → Einstellungen → API"}"></div>
   <div class="hint">Der Token wird nur auf diesem Gerät gespeichert.</div>
   ${/^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(location.hostname) ? `<div class="fld"><span class="cb btn" id="fetchTok" style="height:3.4rem;font-size:1.3rem;padding:0 1.2rem">Token vom PC holen</span><span class="hint" id="fetchTokMsg">nur zur Einrichtung im Heimnetz</span></div>` : ""}
-  <div class="fld"><label for="tour">Turnier</label><select id="tour"><option value="auto">Automatisch (neuestes laufendes)</option></select><span class="cb btn" id="reloadT" style="height:3.4rem;font-size:1.3rem;padding:0 1.2rem">Liste laden</span></div>
+  <div class="fld"><label>Turnier</label><span class="cb btn" id="reloadT" style="height:3.4rem;font-size:1.3rem;padding:0 1.2rem">Liste neu laden</span><span class="hint" id="tourMsg"></span></div>
+  <div class="tlist" id="tourList"></div>
   <h3>Anzeige</h3>
   <div class="fld"><label for="paged">Seiten statt alle Tische auf einem Bildschirm</label><input type="checkbox" id="paged" ${cfg.paged ? "checked" : ""}></div>
   <div class="fld"><label for="perPage">Tische pro Seite</label><select id="perPage">${[6,8].map(n => `<option ${cfg.perPage === n ? "selected" : ""}>${n}</option>`).join("")}</select></div>
@@ -390,13 +394,27 @@ function renderSettings(body){
   <div class="fld"><label for="pinIn">PIN für Einstellungen</label><input type="text" inputmode="numeric" id="pinIn" value="${esc(cfg.pin)}" style="min-width:10rem"></div>
   <div class="err" id="setErr" style="flex:none;text-align:left;min-height:1.6rem"></div>
   <div class="foot" style="margin-top:1rem"><div class="cb btn" id="setCancel">${cfg.token ? "Abbrechen" : ""}</div><div class="cb btn go" id="setSave">Speichern</div></div>`;
-  const sel = $("tour");
-  const fill = list => { sel.innerHTML = `<option value="auto">Automatisch (neuestes laufendes)</option>` + list.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join(""); sel.value = list.some(t => t.id === cfg.tournamentId) ? cfg.tournamentId : "auto"; };
-  const loadList = async () => {
-    const tok = $("tok").value.trim() || cfg.token; if (!tok) { $("setErr").textContent = "Erst Token eingeben"; return; }
-    try { const old = cfg.token; cfg.token = tok; const list = await api("/tournaments?state=running&limit=20"); cfg.token = old; fill(list || []); $("setErr").textContent = (list || []).length ? "" : "Kein laufendes Turnier gefunden"; }
-    catch (e) { $("setErr").textContent = e.status === 401 || e.status === 403 ? "Token ungültig" : "Keine Verbindung zu Kickertool"; }
+  let selTour = cfg.tournamentId || "auto", tourList = [];
+  const fill = () => {
+    if (selTour !== "auto" && !tourList.some(t => t.id === selTour)) tourList = tourList.concat([{ id: selTour, name: "Gespeichertes Turnier (läuft nicht mehr?)" }]);
+    const opts = [{ id: "auto", name: "Automatisch – immer das neueste laufende Turnier" }].concat(tourList);
+    $("tourList").innerHTML = opts.map(t => `<div class="cb topt${t.id === selTour ? " on" : ""}" data-tid="${esc(t.id)}">${esc(t.name)}</div>`).join("");
+    $("tourList").querySelectorAll(".topt").forEach(el => el.onclick = () => { selTour = el.dataset.tid; fill(); });
   };
+  const loadList = async () => {
+    const msg = $("tourMsg");
+    const tok = $("tok").value.trim() || cfg.token; if (!tok) { msg.textContent = "Erst Token eingeben"; return; }
+    msg.textContent = "Lade …";
+    const old = cfg.token; cfg.token = tok;
+    try {
+      const list = (await api("/tournaments?state=running&limit=20")) || [];
+      tourList = list.sort((a, b) => String(b.date).localeCompare(String(a.date))).map(t => ({ id: t.id, name: t.name }));
+      fill();
+      msg.textContent = list.length ? list.length + " laufende(s) Turnier(e) gefunden" : "Kein laufendes Turnier gefunden";
+    } catch (e) { msg.textContent = e.status === 401 || e.status === 403 ? "Token ungültig" : "Keine Verbindung zu Kickertool"; }
+    finally { cfg.token = old; if (old) authErr = false; }
+  };
+  fill();
   $("reloadT").onclick = loadList;
   if ($("fetchTok")) $("fetchTok").onclick = async () => {
     const msg = $("fetchTokMsg");
@@ -417,7 +435,7 @@ function renderSettings(body){
       const old = cfg.token; cfg.token = tok;
       try { await api("/hello"); } catch (e) { cfg.token = old; $("setErr").textContent = e.status ? "Token ungültig" : "Keine Verbindung – Token nicht geprüft"; if (e.status) return; cfg.token = tok; }
     }
-    cfg.tournamentId = sel.value; cfg.paged = $("paged").checked; cfg.perPage = +$("perPage").value;
+    cfg.tournamentId = selTour; cfg.paged = $("paged").checked; cfg.perPage = +$("perPage").value;
     cfg.shortOn = $("shortOn").checked; cfg.shortWins = +$("shortWins").value; cfg.fullFrom = $("fullFrom").value;
     const p = $("pinIn").value.trim(); cfg.pin = /^\d{1,8}$/.test(p) ? p : cfg.pin;
     saveCfg(); tournament = null; lastTournamentLoad = 0; authErr = false;
