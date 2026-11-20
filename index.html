@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Klask">
+<meta name="theme-color" content="#FFD200">
+<title>Klask-Station</title>
+<style>
+:root{--y:#FFD200;--k:#111;--g:#666;--l:#eee;--red:#b42318;--green:#1d7a3a}
+html{font-size:min(calc(100vw / 64), calc(100vh / 38.4))}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#fff;color:var(--k);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;overflow:hidden}
+body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#app{height:100%;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
+.bar{display:flex;justify-content:space-between;align-items:center;padding:.5rem 1.4rem;font-size:1.2rem;color:var(--g);border-bottom:1px solid var(--l);flex:none}
+.bar .st{display:flex;align-items:center;gap:.5rem}
+.dot{width:.8rem;height:.8rem;border-radius:50%;background:#bbb;display:inline-block}
+.dot.ok{background:#2bb24c}.dot.warn{background:#e8a400}.dot.err{background:var(--red)}
+.gear{width:2.6rem;height:2.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#999}
+.body{flex:1;min-height:0;padding:.8rem 1.2rem 1rem;display:flex;flex-direction:column}
+.h1{font-size:2.5rem;font-weight:600;margin:0 0 .8rem;line-height:1.15}
+.grid{display:grid;grid-auto-flow:column;align-content:start;flex:1;min-height:0}
+.tile{display:flex;border:.4rem solid var(--k);overflow:hidden;cursor:pointer;background:#fff;min-width:0}
+.tile:active{transform:scale(.98)}
+.tn{background:var(--y);color:var(--k);font-weight:700;flex:none;display:flex;align-items:center;justify-content:center;white-space:nowrap}
+.names{padding:.3rem 1rem;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.nm{font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rd{color:var(--g);margin-top:.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cb{display:flex;align-items:center;justify-content:center;cursor:pointer;white-space:nowrap}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:1.2rem;padding-top:.6rem;flex:none}
+.arr{width:9rem;height:4.6rem;border:.3rem solid var(--k);border-radius:1.4rem;background:var(--y);color:var(--k)}
+.arr.off{background:#f2f2f2;border-color:#ccc;color:#bbb;cursor:default}
+.pg{font-size:2.4rem;font-weight:700}
+.empty{margin:auto;text-align:center;color:var(--g);font-size:1.9rem;line-height:1.4}
+.head{display:flex;align-items:center;gap:1.2rem;margin-bottom:.4rem;flex:none}
+.pill{display:flex;border:.3rem solid var(--k);border-radius:1.4rem;overflow:hidden;height:4.6rem;flex:none}
+.score{flex:1;display:flex;align-items:center;justify-content:center;gap:1.4rem;font-size:2rem;font-weight:700;min-width:0}
+.score span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta{font-size:1.1rem;color:#888;text-align:right;width:8rem;flex:none;line-height:1.3}
+.rows{border-top:1px solid var(--l);flex:none}
+.row{display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.7rem 0;border-bottom:1px solid #f0f0f0}
+.nb{flex:1 1 0;min-width:0;max-width:4.4rem;height:4.4rem;border-radius:.7rem;border:1px solid #ccc;background:#fff;color:var(--k);font-size:2rem;font-weight:700;line-height:1}
+.nb.on{background:var(--y);border:.2rem solid var(--k)}
+.mid{width:7.4rem;text-align:center;font-size:2rem;font-weight:700;white-space:nowrap;flex:none;line-height:1.1}
+.mid small{display:block;font-size:1.1rem;font-weight:400;color:#888}
+.foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-top:.6rem;flex:none}
+.btn{height:4.6rem;border-radius:.8rem;font-size:1.6rem;padding:0 2.2rem;border:1px solid #bbb;background:#fff;color:var(--k)}
+.go{background:var(--k);color:var(--y);border:none;font-weight:700}
+.go.busy{opacity:.6}
+.err{font-size:1.3rem;color:var(--red);text-align:center;flex:1}
+.done{margin:auto;text-align:center}
+.check{width:8rem;height:8rem;border-radius:50%;background:var(--y);border:.3rem solid var(--k);display:flex;align-items:center;justify-content:center;margin:0 auto}
+.big{font-size:2.6rem;font-weight:700;margin-top:1.2rem}
+.sub{font-size:1.7rem;color:#444;margin-top:.4rem}
+.small{font-size:1.2rem;color:#888;margin-top:.6rem}
+.banner{background:#fff4cc;color:#6b4f00;font-size:1.3rem;padding:.4rem 1.4rem;flex:none}
+.banner.red{background:#fde8e8;color:var(--red)}
+.settings{overflow:auto;-webkit-overflow-scrolling:touch;-webkit-user-select:text;user-select:text}
+.settings h2{font-size:2rem;margin:.4rem 0 1rem}
+.settings h3{font-size:1.4rem;margin:1.6rem 0 .6rem;color:#444}
+.fld{display:flex;align-items:center;gap:1rem;margin:.6rem 0;font-size:1.4rem;flex-wrap:wrap}
+.fld label{min-width:14rem}
+.fld input[type=text],.fld input[type=password],.fld select{font-size:1.4rem;padding:.6rem .8rem;border:1px solid #bbb;border-radius:.6rem;min-width:20rem;max-width:100%;background:#fff;color:var(--k)}
+.fld input[type=checkbox]{width:2rem;height:2rem}
+.hint{font-size:1.15rem;color:#777;margin:.2rem 0 .4rem}
+.pin{display:grid;grid-template-columns:repeat(3,7rem);gap:.8rem;justify-content:center;margin-top:1rem}
+.pin .k{height:5rem;border:1px solid #bbb;border-radius:.8rem;font-size:2.2rem;font-weight:700;background:#fff}
+.dots{font-size:3rem;letter-spacing:1rem;text-align:center;min-height:3.6rem}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="bar"><div class="st"><span class="dot" id="dot"></span><span id="status">Starte …</span></div><div class="gear" id="gear" aria-label="Einstellungen"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div></div>
+  <div id="banner"></div>
+  <div class="body" id="body"></div>
+</div>
+<script>
+"use strict";
+/* ---------- Konfiguration ---------- */
+const API = "https://api.tournament.io/v1/public";
+const DEMO = new URLSearchParams(location.search).has("demo");
+const LS = "klask-station-v1";
+const DEFAULTS = { token: "", pin: "1234", tournamentId: "auto", paged: false, perPage: 8,
+  shortOn: true, shortWins: 1, fullFrom: "final" };
+let cfg = Object.assign({}, DEFAULTS, load(LS) || {});
+function load(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } }
+function save(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function saveCfg(){ save(LS, cfg); }
+
+/* ---------- Zustand ---------- */
+let tournament = null;          // {id, name}
+let groupFmt = {};              // groupName/groupId -> {numSets, draw}
+let matches = [];               // laufende Matches an Tischen
+let lastOk = 0, netErr = "", authErr = false;
+let localDone = {};             // matchId -> Zeitstempel (lokal eingetragen)
+let queue = load(LS + "-queue") || [];   // nicht gesendete Ergebnisse
+let st = { s: "tables" };
+let page = 0;
+
+/* ---------- Hilfsfunktionen ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ROUND = { "FINALS-1-8":"Achtelfinale", "FINALS-1-4":"Viertelfinale", "FINALS-1-2":"Halbfinale",
+  "FINALS-1-1":"Finale", "THIRD_PLACE":"Spiel um Platz 3", "FINALS-1-16":"Sechzehntelfinale" };
+function roundLabel(r){ if (!r) return ""; if (ROUND[r]) return ROUND[r]; const m = /^Round (\d+)$/.exec(r); return m ? "Runde " + m[1] : r; }
+const isKo = r => /^FINALS-|^THIRD_PLACE$/.test(r || "");
+function fullRounds(){
+  const s = ["FINALS-1-1", "THIRD_PLACE"];
+  if (cfg.fullFrom === "semi" || cfg.fullFrom === "quarter") s.push("FINALS-1-2");
+  if (cfg.fullFrom === "quarter") s.push("FINALS-1-4");
+  return s;
+}
+/* Format eines Matches: wie viele Saetze werden wirklich gespielt, wie viele will Kickertool */
+function formatOf(m){
+  const g = groupFmt[m.groupId] || groupFmt[m.groupName] || { numSets: 1, draw: false };
+  const kt = Math.max(1, g.numSets | 0);
+  let play = kt, shortened = false;
+  if (cfg.shortOn && isKo(m.roundName) && !fullRounds().includes(m.roundName) && cfg.shortWins < kt) {
+    play = cfg.shortWins; shortened = true;
+  }
+  const draw = !!g.draw && !shortened && kt >= 2;
+  const maxSets = draw ? 2 * kt - 2 : 2 * play - 1;
+  return { kt, play, shortened, draw, maxSets,
+    label: draw ? "Best of " + maxSets : "Best of " + (2 * play - 1) };
+}
+const validSet = s => s[0] != null && s[1] != null && ((s[0] === 6 && s[1] < 6) || (s[1] === 6 && s[0] < 6));
+function wins(sets){ const w = [0,0]; sets.filter(validSet).forEach(s => w[s[0] > s[1] ? 0 : 1]++); return w; }
+function decided(f, sets){
+  const v = sets.filter(validSet), w = wins(v);
+  if (w[0] >= f.play || w[1] >= f.play) return true;
+  return f.draw && v.length >= f.maxSets;
+}
+function visibleRows(f, sets){
+  let v = f.draw ? f.maxSets : f.play;
+  while (v < f.maxSets && sets.slice(0, v).every(validSet) && !decided(f, sets.slice(0, v))) v++;
+  return Math.min(v, f.maxSets);
+}
+/* Fuer Kickertool auffuellen: letzten Satz wiederholen, bis der Sieger kt Saetze hat */
+function padSets(f, sets){
+  if (!f.shortened) return sets.slice();
+  const out = sets.slice(), last = sets[sets.length - 1], wi = last[0] > last[1] ? 0 : 1;
+  while (wins(out)[wi] < f.kt) out.push(last.slice());
+  return out;
+}
+const ss = sets => sets.map(s => s[0] + ":" + s[1]).join(", ");
+
+/* ---------- Kickertool-Schnittstelle ---------- */
+async function api(path, opts = {}){
+  const r = await fetch(API + path, Object.assign({ headers: Object.assign({ Authorization: "Bearer " + cfg.token },
+    opts.body ? { "Content-Type": "application/json" } : {}) }, opts));
+  if (r.status === 401 || r.status === 403) { authErr = true; throw Object.assign(new Error("Token ungültig"), { status: r.status }); }
+  if (!r.ok) { let t = ""; try { t = await r.text(); } catch(e){} throw Object.assign(new Error("HTTP " + r.status + " " + t), { status: r.status }); }
+  authErr = false;
+  const txt = await r.text();
+  return txt ? JSON.parse(txt) : null;
+}
+async function loadTournament(){
+  let id = cfg.tournamentId;
+  if (id === "auto" || !id) {
+    const list = await api("/tournaments?state=running&limit=20");
+    const t = (list || []).sort((a, b) => String(b.date).localeCompare(String(a.date)))[0];
+    if (!t) { tournament = null; return; }
+    id = t.id;
+  }
+  const d = await api("/tournaments/" + encodeURIComponent(id));
+  tournament = { id: d.id || id, name: d.name || "" };
+  const fmt = {};
+  for (const disc of d.disciplines || []) for (const stg of disc.stages || []) for (const g of stg.groups || []) {
+    const mc = ((g.options || {}).matchConfigurations || [])[0] || {};
+    const f = { numSets: mc.numSets || 1, draw: !!mc.draw };
+    if (g.id) fmt[g.id] = f; if (g.name) fmt[g.name] = f;
+  }
+  groupFmt = fmt;
+}
+async function loadCourts(){
+  if (!tournament) { matches = []; return; }
+  const courts = await api("/tournaments/" + encodeURIComponent(tournament.id) + "/courts?includeMatchDetails=true");
+  const out = [];
+  for (const c of courts || []) {
+    const m = c.currentMatch;
+    if (!m || m.state !== "running" || !m.entries || !m.entries[0] || !m.entries[1]) continue;
+    if (localDone[m.id]) continue;
+    if (queue.some(q => q.matchId === m.id)) continue;
+    out.push({ id: m.id, table: c.number != null ? c.number : c.name, tableName: c.name,
+      a: m.entries[0].name, b: m.entries[1].name, roundName: m.roundName, groupName: m.groupName, groupId: m.groupId });
+  }
+  out.sort((x, y) => (+x.table || 0) - (+y.table || 0) || String(x.table).localeCompare(String(y.table)));
+  matches = out;
+}
+async function sendResult(item){
+  const body = JSON.stringify({ result: [item.sets] });
+  return api("/tournaments/" + encodeURIComponent(item.tournamentId) + "/matches/" + encodeURIComponent(item.matchId) + "/result",
+    { method: "PUT", body });
+}
+
+/* ---------- Demo-Modus ---------- */
+const DEMO_N = ["Anna","Ben","Cem","Dana","vitus r.","maria di.","Gül","Hannes","Ida","Jonas","Kim","Lea","Wolfgang E.","Sarah","Linus E.","Paul L.","Beatriz H.","Maxime","constantin","flo p.","Marco A.","Max M.","Nina M.","Gagan D.","Heinrich D.","Tom","Ulla","Vera","Yusuf","Zoe","Oskar","Pia"];
+function demoInit(){
+  const n = +(new URLSearchParams(location.search).get("demo") || 12) || 12;
+  tournament = { id: "demo", name: "Demo-Turnier" };
+  groupFmt = { Profi: { numSets: 2, draw: false } };
+  matches = Array.from({ length: Math.min(16, n) }, (_, i) => ({ id: "d" + i, table: i + 1, a: DEMO_N[2*i], b: DEMO_N[2*i+1],
+    roundName: i === 0 ? "FINALS-1-1" : i === 1 ? "THIRD_PLACE" : "FINALS-1-4", groupName: "Profi" }));
+  lastOk = Date.now();
+}
+
+/* ---------- Abfrage-Schleife ---------- */
+let polling = false, lastTournamentLoad = 0;
+async function poll(){
+  if (DEMO || polling || !cfg.token) return;
+  polling = true;
+  try {
+    if (!tournament || Date.now() - lastTournamentLoad > 60000) { await loadTournament(); lastTournamentLoad = Date.now(); }
+    await loadCourts();
+    lastOk = Date.now(); netErr = "";
+    for (const k in localDone) if (Date.now() - localDone[k] > 120000) delete localDone[k];
+  } catch (e) { netErr = e.status ? e.message : "Keine Verbindung"; }
+  polling = false;
+  await flushQueue();
+  if (st.s === "tables") render(); else renderBar();
+}
+async function flushQueue(){
+  if (DEMO || !queue.length) return;
+  for (const item of queue.slice()) {
+    try { await sendResult(item); queue = queue.filter(q => q !== item); }
+    catch (e) {
+      if (e.status && e.status !== 401 && e.status !== 403 && e.status < 500) { // z. B. 412: Match nicht mehr offen
+        item.failed = e.status; queue = queue.filter(q => q !== item); failedItems.push(item);
+      } else break;
+    }
+  }
+  save(LS + "-queue", queue);
+}
+let failedItems = [];
+
+/* ---------- Statuszeile ---------- */
+function renderBar(){
+  const dot = $("dot"), s = $("status");
+  let cls = "dot", txt;
+  if (DEMO) { cls += " ok"; txt = "Demo-Modus · " + (tournament ? tournament.name : ""); }
+  else if (!cfg.token) { cls += " err"; txt = "Nicht eingerichtet"; }
+  else if (authErr) { cls += " err"; txt = "Token ungültig – Einstellungen prüfen"; }
+  else if (netErr) { cls += " err"; txt = "Keine Verbindung zu Kickertool"; }
+  else if (!tournament) { cls += " warn"; txt = "Kein laufendes Turnier gefunden"; }
+  else { const age = Math.round((Date.now() - lastOk) / 1000); cls += age > 30 ? " warn" : " ok"; txt = tournament.name + " · aktualisiert vor " + age + " s"; }
+  dot.className = cls; s.textContent = txt;
+  const b = $("banner");
+  if (failedItems.length) b.innerHTML = `<div class="banner red">${failedItems.length} Ergebnis(se) konnten nicht eingetragen werden (Match nicht mehr offen). Bitte bei der Turnierleitung melden: ${failedItems.map(i => "Tisch #" + esc(i.table) + " " + esc(i.text)).join(" · ")}</div>`;
+  else if (queue.length) b.innerHTML = `<div class="banner">${queue.length} Ergebnis(se) werden nachgesendet, sobald die Verbindung wieder da ist.</div>`;
+  else b.innerHTML = "";
+}
+
+/* ---------- Bildschirme ---------- */
+function layout(n, paged){
+  if (paged) return n <= 6 ? { c: 2, tw: 8, tf: 3.2, nf: 1.8, r: 2, rf: 1.1, g: 1, one: false, maxH: 9 } : { c: 2, tw: 7.2, tf: 2.8, nf: 1.8, r: 1.6, rf: 0, g: .8, one: true, maxH: 6 };
+  if (n <= 6) return { c: 2, tw: 8.4, tf: 3.6, nf: 1.9, r: 2.2, rf: 1.2, g: 1.2, maxH: 10 };
+  if (n <= 9) return { c: 3, tw: 6.2, tf: 2.8, nf: 1.6, r: 2, rf: 1.1, g: 1, maxH: 9 };
+  if (n <= 12) return { c: 3, tw: 6, tf: 2.6, nf: 1.5, r: 1.8, rf: 0, g: .8, maxH: 8 };
+  return { c: 4, tw: 5, tf: 2.2, nf: 1.4, r: 1.6, rf: 0, g: .7, maxH: 7 };
+}
+function render(){
+  renderBar();
+  const body = $("body");
+  if (st.s === "tables") return renderTables(body);
+  if (st.s === "sets") return renderSets(body);
+  if (st.s === "done") return renderDone(body);
+  if (st.s === "pin") return renderPin(body);
+  if (st.s === "settings") return renderSettings(body);
+}
+function renderTables(body){
+  if (!DEMO && !cfg.token) { st = { s: "settings" }; return render(); }
+  const open = matches;
+  const pg = cfg.paged && open.length > cfg.perPage, pages = pg ? Math.ceil(open.length / cfg.perPage) : 1;
+  if (page >= pages) page = pages - 1; if (page < 0) page = 0;
+  const shown = pg ? open.slice(page * cfg.perPage, (page + 1) * cfg.perPage) : open;
+  const L = layout(pg ? shown.length : open.length, pg), rows = Math.max(1, Math.ceil(shown.length / L.c));
+  const nm = m => L.one ? `${esc(m.a)} – ${esc(m.b)}` : `${esc(m.a)}<br>${esc(m.b)}`;
+  body.innerHTML = `<div class="h1">An welchem Tisch habt ihr gespielt?</div>
+  ${open.length ? `<div class="grid" id="grid" style="grid-template-columns:repeat(${L.c},minmax(0,1fr));gap:${L.g}rem">${shown.map(m =>
+    `<div class="tile" data-id="${esc(m.id)}" style="border-radius:${L.r}rem;border-width:${open.length > 12 && !pg ? .3 : .4}rem"><div class="tn" style="width:${L.tw}rem;font-size:${L.tf}rem">#${esc(m.table)}</div><div class="names"><div class="nm" style="font-size:${L.nf}rem">${nm(m)}</div>${L.rf ? `<div class="rd" style="font-size:${L.rf}rem">${esc(roundLabel(m.roundName))}</div>` : ""}</div></div>`).join("")}</div>`
+    : `<div class="empty">${!tournament ? "Kein laufendes Turnier gefunden" : "Gerade läuft kein Match an einem Tisch"}<br><span style="font-size:1.3rem">Die Anzeige aktualisiert sich automatisch.</span></div>`}
+  ${pg ? `<div class="nav"><div class="cb arr${page === 0 ? " off" : ""}" id="prev">${svgArrow(true)}</div><div class="pg">Seite ${page + 1} von ${pages}</div><div class="cb arr${page === pages - 1 ? " off" : ""}" id="next">${svgArrow(false)}</div></div>` : ""}`;
+  const grid = $("grid");
+  if (grid) {
+    const remPx = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const avail = grid.clientHeight, gap = L.g * remPx;
+    const h = Math.min(L.maxH * remPx, (avail - gap * (rows - 1)) / rows);
+    grid.style.gridTemplateRows = `repeat(${rows}, ${Math.max(40, h)}px)`;
+    grid.querySelectorAll(".tile").forEach(t => t.onclick = () => {
+      const m = matches.find(x => x.id === t.dataset.id); if (!m) return;
+      const f = formatOf(m);
+      st = { s: "sets", m, f, sets: Array.from({ length: f.maxSets }, () => [null, null]), err: "" }; render();
+    });
+  }
+  if (pg) { $("prev").onclick = () => { if (page > 0) { page--; render(); } }; $("next").onclick = () => { if (page < pages - 1) { page++; render(); } }; }
+}
+function svgArrow(left){ return `<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="${left ? "M15 6l-6 6l6 6" : "M9 6l6 6l-6 6"}"/></svg>`; }
+function renderSets(body){
+  const { m, f } = st, v = visibleRows(f, st.sets);
+  for (let j = v; j < f.maxSets; j++) st.sets[j] = [null, null];
+  const w = wins(st.sets.slice(0, v));
+  const nb = (s, i, sd, p) => `<div class="cb nb${s[sd] === p ? " on" : ""}" data-i="${i}" data-sd="${sd}" data-p="${p}">${p}</div>`;
+  const rows = st.sets.slice(0, v).map((s, i) => `<div class="row">${[0,1,2,3,4,5,6].map(p => nb(s, i, 0, p)).join("")}<div class="mid"><small>Satz ${i + 1}</small>${s[0] ?? "–"}:${s[1] ?? "–"}</div>${[6,5,4,3,2,1,0].map(p => nb(s, i, 1, p)).join("")}</div>`).join("");
+  body.innerHTML = `<div class="head"><div class="pill"><div class="tn" style="width:6.4rem;font-size:2.4rem">#${esc(m.table)}</div></div>
+    <div class="score"><span style="flex:1;text-align:right">${esc(m.a)}</span><span style="flex:none;font-size:2.2rem">${w[0]} : ${w[1]}</span><span style="flex:1">${esc(m.b)}</span></div>
+    <div class="meta">${esc(roundLabel(m.roundName))}<br>${f.label}</div></div>
+    <div class="rows">${rows}</div>
+    <div class="foot"><div class="cb btn" id="cancel">Abbrechen</div><div class="err">${esc(st.err)}</div><div class="cb btn go${st.busy ? " busy" : ""}" id="save">${st.busy ? "Sende …" : "Speichern"}</div></div>`;
+  body.querySelectorAll(".nb").forEach(b => b.onclick = () => {
+    const i = +b.dataset.i, sd = +b.dataset.sd, p = +b.dataset.p;
+    st.sets[i][sd] = p; if (p < 6 && st.sets[i][1 - sd] == null) st.sets[i][1 - sd] = 6; st.err = ""; render();
+  });
+  $("cancel").onclick = () => { st = { s: "tables" }; render(); };
+  $("save").onclick = submit;
+}
+async function submit(){
+  if (st.busy) return;
+  const { m, f } = st, vs = st.sets.slice(0, visibleRows(f, st.sets));
+  if (vs.some(x => !validSet(x))) { st.err = "Bitte jeden Satz ausfüllen, eine Seite hat immer 6"; return render(); }
+  if (!decided(f, vs)) { st.err = "Es fehlt noch ein Satz"; return render(); }
+  const sent = padSets(f, vs), w = wins(vs);
+  const draw = w[0] === w[1];
+  const text = draw ? `${m.a} – ${m.b} unentschieden ${w[0]}:${w[1]}` : `${w[0] > w[1] ? m.a : m.b} gewinnt ${Math.max(...w)}:${Math.min(...w)}`;
+  const item = { tournamentId: tournament.id, matchId: m.id, table: m.table, sets: sent, text: text + " (" + ss(vs) + ")" };
+  if (DEMO) { matches = matches.filter(x => x.id !== m.id); return showDone(m, text, vs, sent, f, false); }
+  st.busy = true; render();
+  try {
+    await sendResult(item);
+    localDone[m.id] = Date.now(); matches = matches.filter(x => x.id !== m.id);
+    showDone(m, text, vs, sent, f, false);
+  } catch (e) {
+    st.busy = false;
+    if (e.status === 412) { st.err = "Dieses Match ist in Kickertool nicht mehr offen (schon eingetragen?). Bitte Turnierleitung fragen."; return render(); }
+    if (e.status === 401 || e.status === 403) { st.err = "Token ungültig – bitte Turnierleitung holen."; return render(); }
+    if (e.status && e.status < 500) { st.err = "Kickertool hat das Ergebnis abgelehnt (" + e.status + "). Bitte Turnierleitung fragen."; return render(); }
+    queue.push(item); save(LS + "-queue", queue); matches = matches.filter(x => x.id !== m.id);
+    showDone(m, text, vs, sent, f, true);
+  }
+}
+function showDone(m, text, vs, sent, f, queued){
+  st = { s: "done", m, text, vs, sent, f, queued }; render();
+  clearTimeout(showDone.t); showDone.t = setTimeout(() => { if (st.s === "done") { st = { s: "tables" }; render(); } }, 3500);
+}
+function renderDone(body){
+  const { m, text, vs, sent, f, queued } = st;
+  body.innerHTML = `<div class="done"><div class="check"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg></div>
+  <div class="big">${queued ? "Gespeichert – wird nachgesendet" : "Eingetragen"}</div>
+  <div class="sub">${esc(text)} · ${ss(vs)}</div>
+  ${f.shortened ? `<div class="small">An Kickertool: ${ss(sent)}</div>` : ""}
+  <div class="small">Tisch #${esc(m.table)} ist frei · zurück in 3 Sekunden</div></div>`;
+  body.onclick = null;
+  setTimeout(() => { body.onclick = () => { if (st.s === "done") { st = { s: "tables" }; body.onclick = null; render(); } }; }, 600);
+}
+function renderPin(body){
+  const digits = st.pin || "";
+  body.innerHTML = `<div class="h1" style="text-align:center">PIN für Einstellungen</div><div class="dots">${"●".repeat(digits.length) || "&nbsp;"}</div>
+  <div class="err" style="flex:none;min-height:1.6rem">${esc(st.err || "")}</div>
+  <div class="pin">${[1,2,3,4,5,6,7,8,9,"←",0,"OK"].map(k => `<div class="cb k" data-k="${k}">${k}</div>`).join("")}</div>
+  <div style="text-align:center;margin-top:1rem"><span class="cb btn" id="pinCancel" style="display:inline-flex">Abbrechen</span></div>`;
+  body.querySelectorAll("[data-k]").forEach(b => b.onclick = () => {
+    const k = b.dataset.k;
+    if (k === "←") st.pin = digits.slice(0, -1);
+    else if (k === "OK") { if ((st.pin || "") === String(cfg.pin)) { st = { s: "settings" }; } else { st.err = "Falsche PIN"; st.pin = ""; } }
+    else if (digits.length < 8) { st.pin = digits + k; st.err = ""; }
+    render();
+  });
+  $("pinCancel").onclick = () => { st = { s: "tables" }; render(); };
+}
+function renderSettings(body){
+  body.classList.add("settings");
+  body.innerHTML = `<h2>Einstellungen</h2>
+  <h3>Verbindung zu Kickertool</h3>
+  <div class="fld"><label for="tok">API-Token</label><input type="password" id="tok" autocomplete="off" placeholder="${cfg.token ? "gespeichert – zum Ändern neu einfügen" : "aus Kickertool → Einstellungen → API"}"></div>
+  <div class="hint">Der Token wird nur auf diesem Gerät gespeichert.</div>
+  ${/^(192\.168\.|10\.|172\.(1[6-9]|2\d|3[01])\.)/.test(location.hostname) ? `<div class="fld"><span class="cb btn" id="fetchTok" style="height:3.4rem;font-size:1.3rem;padding:0 1.2rem">Token vom PC holen</span><span class="hint" id="fetchTokMsg">nur zur Einrichtung im Heimnetz</span></div>` : ""}
+  <div class="fld"><label for="tour">Turnier</label><select id="tour"><option value="auto">Automatisch (neuestes laufendes)</option></select><span class="cb btn" id="reloadT" style="height:3.4rem;font-size:1.3rem;padding:0 1.2rem">Liste laden</span></div>
+  <h3>Anzeige</h3>
+  <div class="fld"><label for="paged">Seiten statt alle Tische auf einem Bildschirm</label><input type="checkbox" id="paged" ${cfg.paged ? "checked" : ""}></div>
+  <div class="fld"><label for="perPage">Tische pro Seite</label><select id="perPage">${[6,8].map(n => `<option ${cfg.perPage === n ? "selected" : ""}>${n}</option>`).join("")}</select></div>
+  <h3>Verkürzte Runden (K.-o.-Baum)</h3>
+  <div class="hint">Kickertool kann die Satzzahl nicht pro Runde ändern. Ist das eingeschaltet, wird bis zur gewählten Runde kürzer gespielt und für Kickertool der letzte Satz wiederholt.</div>
+  <div class="fld"><label for="shortOn">Eingeschaltet</label><input type="checkbox" id="shortOn" ${cfg.shortOn ? "checked" : ""}></div>
+  <div class="fld"><label for="shortWins">Gespielt wird vorher</label><select id="shortWins"><option value="1" ${cfg.shortWins == 1 ? "selected" : ""}>Best of 1</option><option value="2" ${cfg.shortWins == 2 ? "selected" : ""}>Best of 3</option><option value="3" ${cfg.shortWins == 3 ? "selected" : ""}>Best of 5</option></select></div>
+  <div class="fld"><label for="fullFrom">Volles Format ab</label><select id="fullFrom"><option value="final" ${cfg.fullFrom === "final" ? "selected" : ""}>Finale (und Platz 3)</option><option value="semi" ${cfg.fullFrom === "semi" ? "selected" : ""}>Halbfinale</option><option value="quarter" ${cfg.fullFrom === "quarter" ? "selected" : ""}>Viertelfinale</option></select></div>
+  <h3>Sicherheit</h3>
+  <div class="fld"><label for="pinIn">PIN für Einstellungen</label><input type="text" inputmode="numeric" id="pinIn" value="${esc(cfg.pin)}" style="min-width:10rem"></div>
+  <div class="err" id="setErr" style="flex:none;text-align:left;min-height:1.6rem"></div>
+  <div class="foot" style="margin-top:1rem"><div class="cb btn" id="setCancel">${cfg.token ? "Abbrechen" : ""}</div><div class="cb btn go" id="setSave">Speichern</div></div>`;
+  const sel = $("tour");
+  const fill = list => { sel.innerHTML = `<option value="auto">Automatisch (neuestes laufendes)</option>` + list.map(t => `<option value="${esc(t.id)}">${esc(t.name)}</option>`).join(""); sel.value = list.some(t => t.id === cfg.tournamentId) ? cfg.tournamentId : "auto"; };
+  const loadList = async () => {
+    const tok = $("tok").value.trim() || cfg.token; if (!tok) { $("setErr").textContent = "Erst Token eingeben"; return; }
+    try { const old = cfg.token; cfg.token = tok; const list = await api("/tournaments?state=running&limit=20"); cfg.token = old; fill(list || []); $("setErr").textContent = (list || []).length ? "" : "Kein laufendes Turnier gefunden"; }
+    catch (e) { $("setErr").textContent = e.status === 401 || e.status === 403 ? "Token ungültig" : "Keine Verbindung zu Kickertool"; }
+  };
+  $("reloadT").onclick = loadList;
+  if ($("fetchTok")) $("fetchTok").onclick = async () => {
+    const msg = $("fetchTokMsg");
+    try {
+      const r = await fetch("einrichtung-token.txt", { cache: "no-store" });
+      if (!r.ok) throw new Error();
+      const t = (await r.text()).trim();
+      if (!t) throw new Error();
+      $("tok").value = t; msg.textContent = "Token übernommen – jetzt unten auf Speichern tippen";
+    } catch (e) { msg.textContent = "Auf dem PC liegt gerade kein Token bereit"; }
+  };
+  if (cfg.token && !DEMO) loadList();
+  $("setCancel").onclick = () => { if (!cfg.token) return; body.classList.remove("settings"); st = { s: "tables" }; render(); };
+  $("setSave").onclick = async () => {
+    const tok = $("tok").value.trim();
+    if (!tok && !cfg.token && !DEMO) { $("setErr").textContent = "Bitte API-Token eingeben"; return; }
+    if (tok) {
+      const old = cfg.token; cfg.token = tok;
+      try { await api("/hello"); } catch (e) { cfg.token = old; $("setErr").textContent = e.status ? "Token ungültig" : "Keine Verbindung – Token nicht geprüft"; if (e.status) return; cfg.token = tok; }
+    }
+    cfg.tournamentId = sel.value; cfg.paged = $("paged").checked; cfg.perPage = +$("perPage").value;
+    cfg.shortOn = $("shortOn").checked; cfg.shortWins = +$("shortWins").value; cfg.fullFrom = $("fullFrom").value;
+    const p = $("pinIn").value.trim(); cfg.pin = /^\d{1,8}$/.test(p) ? p : cfg.pin;
+    saveCfg(); tournament = null; lastTournamentLoad = 0; authErr = false;
+    body.classList.remove("settings"); st = { s: "tables" }; page = 0; render(); poll();
+  };
+}
+
+/* ---------- Admin-Passwort (einmal pro Geraet) ---------- */
+/* Hinweis: Das ist nur eine Sperre gegen zufaellige Besucher. Die App enthaelt keine Zugangsdaten;
+   ohne Kickertool-Token kann niemand etwas eintragen. */
+const ADMIN_HASH = "b80654e67317fd0af57404e6fe141671492aaa91d24e3dd13e9649fcf38abbeb";
+function sha256(str){
+  const K = [0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const bytes = Array.from(new TextEncoder().encode(str)); const l = bytes.length * 8;
+  bytes.push(0x80); while (bytes.length % 64 !== 56) bytes.push(0);
+  for (let i = 7; i >= 0; i--) bytes.push(i >= 4 ? 0 : (l >>> (i * 8)) & 0xff);
+  let H = [0x6a09e667,0xbb67ae85,0x3c6ef372,0xa54ff53a,0x510e527f,0x9b05688c,0x1f83d9ab,0x5be0cd19];
+  const r = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let o = 0; o < bytes.length; o += 64) {
+    const w = new Array(64);
+    for (let i = 0; i < 16; i++) w[i] = (bytes[o+4*i] << 24) | (bytes[o+4*i+1] << 16) | (bytes[o+4*i+2] << 8) | bytes[o+4*i+3];
+    for (let i = 16; i < 64; i++) { const s0 = r(w[i-15],7) ^ r(w[i-15],18) ^ (w[i-15] >>> 3), s1 = r(w[i-2],17) ^ r(w[i-2],19) ^ (w[i-2] >>> 10); w[i] = (w[i-16] + s0 + w[i-7] + s1) | 0; }
+    let [a,b,c,d,e,f,g,h] = H;
+    for (let i = 0; i < 64; i++) { const t1 = (h + (r(e,6) ^ r(e,11) ^ r(e,25)) + ((e & f) ^ (~e & g)) + K[i] + w[i]) | 0, t2 = ((r(a,2) ^ r(a,13) ^ r(a,22)) + ((a & b) ^ (a & c) ^ (b & c))) | 0; h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0; }
+    H = H.map((v, i) => (v + [a,b,c,d,e,f,g,h][i]) | 0);
+  }
+  return H.map(v => (v >>> 0).toString(16).padStart(8, "0")).join("");
+}
+const unlocked = () => DEMO || load(LS + "-admin") === ADMIN_HASH;
+function renderLock(){
+  $("dot").className = "dot"; $("status").textContent = "Gesperrt"; $("banner").innerHTML = "";
+  const body = $("body");
+  body.innerHTML = `<div style="margin:auto;width:min(36rem,100%);text-align:center">
+    <div class="h1">Klask-Station</div><div class="hint" style="font-size:1.4rem;margin-bottom:1.2rem">Bitte Admin-Passwort eingeben, um dieses Gerät freizuschalten.</div>
+    <div class="fld" style="justify-content:center"><input type="password" id="adm" autocomplete="off" autocapitalize="off" style="font-size:1.8rem;padding:.8rem 1rem;border:1px solid #bbb;border-radius:.6rem;width:100%"></div>
+    <div class="err" id="admErr" style="min-height:1.8rem"></div>
+    <div class="cb btn go" id="admGo" style="margin:1rem auto 0;display:inline-flex">Freischalten</div></div>`;
+  const go = () => {
+    if (sha256($("adm").value) === ADMIN_HASH) { save(LS + "-admin", ADMIN_HASH); start(); }
+    else { $("admErr").textContent = "Falsches Passwort"; $("adm").value = ""; }
+  };
+  $("admGo").onclick = go; $("adm").onkeydown = e => { if (e.key === "Enter") go(); };
+}
+
+/* ---------- Start ---------- */
+$("gear").onclick = () => {
+  if (!unlocked() || st.s === "settings" || st.s === "pin") return;
+  st = (!cfg.token && !DEMO) ? { s: "settings" } : { s: "pin", pin: "", err: "" }; render();
+};
+window.addEventListener("resize", () => { if (unlocked() && st.s === "tables") render(); });
+let started = false;
+function start(){
+  if (started) return; started = true;
+  if (DEMO) demoInit();
+  render(); poll();
+  setInterval(poll, 5000);
+  setInterval(renderBar, 1000);
+}
+if (unlocked()) start(); else renderLock();
+</script>
+</body>
+</html>
