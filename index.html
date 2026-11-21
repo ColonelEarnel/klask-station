@@ -412,10 +412,8 @@ function renderPin(body){
 function renderSettings(body){
   body.classList.add("settings");
   body.innerHTML = `<h2>Einstellungen</h2>
-  <h3>Bereiche auf diesem Gerät</h3>
-  <div class="fld"><label for="useResults">Ergebnisse eintragen (Kickertool)</label><input type="checkbox" id="useResults" ${cfg.useResults ? "checked" : ""}></div>
-  <div class="fld"><label for="useSignup">Turnieranmeldung (Website)</label><input type="checkbox" id="useSignup" ${cfg.useSignup ? "checked" : ""}></div>
-  <div class="hint">Sind beide an, gibt es oben zwei Reiter zum Umschalten.</div>
+  <h3>Was zeigt dieses Gerät?</h3>
+  <div class="tlist" id="modeList"></div>
   <h3>Turnieranmeldung (Website)</h3>
   <div class="fld"><label for="stKey">Stations-Schlüssel</label><input type="password" id="stKey" autocomplete="off" placeholder="${cfg.stationKey ? "gespeichert – zum Ändern neu eingeben" : "STATION_KEY aus Cloudflare"}"></div>
   <div class="fld"><label for="siteUrl">Website-Adresse</label><input type="text" id="siteUrl" autocomplete="off" autocapitalize="off" value="${esc(cfg.siteUrl || DEFAULT_SITE)}"></div>
@@ -438,6 +436,13 @@ function renderSettings(body){
   <div class="fld"><label for="pinIn">PIN für Einstellungen</label><input type="text" inputmode="numeric" id="pinIn" value="${esc(cfg.pin)}" style="min-width:10rem"></div>
   <div class="err" id="setErr" style="flex:none;text-align:left;min-height:1.6rem"></div>
   <div class="foot" style="margin-top:1rem"><div class="cb btn" id="setCancel">${needsSetup() ? "" : "Abbrechen"}</div><div class="cb btn go" id="setSave">Speichern</div></div>`;
+  let selMode = cfg.useSignup && (!cfg.useResults || mode === "signup") ? "signup" : "results";
+  const fillMode = () => {
+    $("modeList").innerHTML = [["results", "Ergebnis eintragen (Kickertool)"], ["signup", "Turnieranmeldung (Website)"]]
+      .map(([v, l]) => `<div class="cb topt${selMode === v ? " on" : ""}" data-mode="${v}">${l}</div>`).join("");
+    $("modeList").querySelectorAll(".topt").forEach(el => el.onclick = () => { selMode = el.dataset.mode; fillMode(); });
+  };
+  fillMode();
   let selTour = cfg.tournamentId || "auto", tourList = [];
   const fill = () => {
     if (selTour !== "auto" && !tourList.some(t => t.id === selTour)) tourList = tourList.concat([{ id: selTour, name: "Gespeichertes Turnier (läuft nicht mehr?)" }]);
@@ -474,7 +479,7 @@ function renderSettings(body){
   $("setCancel").onclick = () => { if (needsSetup()) return; goMain(); };
   $("setSave").onclick = async () => {
     const tok = $("tok").value.trim();
-    const useResults = $("useResults").checked, useSignup = $("useSignup").checked;
+    const useResults = selMode === "results", useSignup = selMode === "signup";
     const key = $("stKey").value.trim(), site = ($("siteUrl").value.trim() || DEFAULT_SITE).replace(/\/+$/, "");
     if (!useResults && !useSignup) { $("setErr").textContent = "Mindestens einen Bereich einschalten"; return; }
     if (useResults && !tok && !cfg.token && !DEMO) { $("setErr").textContent = "Bitte Kickertool-API-Token eingeben"; return; }
@@ -500,7 +505,7 @@ function renderSettings(body){
     cfg.shortOn = $("shortOn").checked; cfg.shortWins = +$("shortWins").value; cfg.fullFrom = $("fullFrom").value;
     const p = $("pinIn").value.trim(); cfg.pin = /^\d{1,8}$/.test(p) ? p : cfg.pin;
     saveCfg(); tournament = null; lastTournamentLoad = 0; authErr = false;
-    page = 0; goMain(); poll();
+    page = 0; goMain(selMode); poll();
   };
 }
 
@@ -520,7 +525,7 @@ function goMain(m){
   render();
 }
 function renderTabs(){
-  const el = $("tabs"), both = DEMO || (cfg.useResults && cfg.useSignup);
+  const el = $("tabs"), both = false; /* Umschalten nur in den Einstellungen hinter der PIN */
   if (!both || !unlocked() || ["settings", "pin"].includes(st.s)) { el.innerHTML = ""; return; }
   const html = `<div class="cb tab${mode === "results" ? " on" : ""}" data-m="results">Ergebnis eintragen</div><div class="cb tab${mode === "signup" ? " on" : ""}" data-m="signup">Turnieranmeldung</div>`;
   if (el.dataset.h === html) return;
