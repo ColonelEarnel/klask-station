@@ -67,6 +67,28 @@ body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit
 .fld input[type=text],.fld input[type=password],.fld select{font-size:1.4rem;padding:.6rem .8rem;border:1px solid #bbb;border-radius:.6rem;min-width:20rem;max-width:100%;background:#fff;color:var(--k)}
 .fld input[type=checkbox]{width:2rem;height:2rem}
 .hint{font-size:1.15rem;color:#777;margin:.2rem 0 .4rem}
+.tabs{display:flex;gap:.4rem}
+.tab{height:3.2rem;padding:0 1.4rem;border:1px solid #ccc;border-radius:1.6rem;font-size:1.35rem;color:#444;background:#fff}
+.tab.on{background:var(--k);color:var(--y);border-color:var(--k);font-weight:700}
+.su{max-width:60rem;width:100%;margin:0 auto}
+.su .row2{display:flex;gap:1rem}
+.su .row2>div{flex:1;min-width:0}
+.su .lbl{font-size:1.3rem;color:#555;margin:1rem 0 .35rem}
+.su input[type=text],.su input[type=email]{width:100%;font-size:1.8rem;padding:.9rem 1rem;border:1px solid #bbb;border-radius:.8rem;background:#fff;color:var(--k);-webkit-user-select:text;user-select:text}
+.seg{display:flex;gap:.5rem;flex-wrap:wrap}
+.seg .cb{flex:1 1 0;min-width:10rem;min-height:4.2rem;border:1px solid #bbb;border-radius:.8rem;font-size:1.45rem;background:#fff;padding:.4rem .8rem;white-space:normal;text-align:center}
+.seg .cb.on{background:var(--y);border:.2rem solid var(--k);font-weight:700}
+.chk{display:flex;align-items:center;gap:1rem;padding:.8rem 0;font-size:1.45rem;cursor:pointer;line-height:1.35}
+.box{width:3rem;height:3rem;flex:none;border:.2rem solid #888;border-radius:.6rem;background:#fff;display:flex;align-items:center;justify-content:center}
+.chk.on .box{background:var(--y);border-color:var(--k)}
+.tcard{border:.3rem solid var(--k);border-radius:1.4rem;padding:.9rem 1.2rem;margin:.4rem 0;display:flex;justify-content:space-between;gap:1rem;align-items:center}
+.tcard .t1{font-size:1.7rem;font-weight:700}
+.tcard .t2{font-size:1.25rem;color:#555;margin-top:.2rem}
+.tcard .cap{font-size:1.3rem;font-weight:700;text-align:right;white-space:nowrap}
+.tsel{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.4rem}
+.tsel .cb{border:1px solid #bbb;border-radius:1.6rem;padding:.5rem 1.1rem;font-size:1.2rem;background:#fff}
+.tsel .cb.on{background:var(--y);border-color:var(--k);font-weight:700}
+.legal{font-size:1.1rem;color:#666;line-height:1.45;margin:.2rem 0 .4rem 4rem}
 .tlist{display:flex;flex-direction:column;gap:.5rem;margin:.2rem 0 .8rem;max-width:44rem}
 .topt{justify-content:flex-start;border:1px solid #bbb;border-radius:.8rem;padding:.9rem 1.2rem;font-size:1.5rem;background:#fff;white-space:normal}
 .topt.on{background:var(--y);border:.2rem solid var(--k);font-weight:700}
@@ -77,7 +99,7 @@ body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit
 </head>
 <body>
 <div id="app">
-  <div class="bar"><div class="st"><span class="dot" id="dot"></span><span id="status">Starte …</span></div><div class="gear" id="gear" aria-label="Einstellungen"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div></div>
+  <div class="bar"><div class="st"><span class="dot" id="dot"></span><span id="status">Starte …</span></div><div class="tabs" id="tabs"></div><div class="gear" id="gear" aria-label="Einstellungen"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div></div>
   <div id="banner"></div>
   <div class="body" id="body"></div>
 </div>
@@ -87,8 +109,10 @@ body{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit
 const API = "https://api.tournament.io/v1/public";
 const DEMO = new URLSearchParams(location.search).has("demo");
 const LS = "klask-station-v1";
+const DEFAULT_SITE = "https://klaskmunich.klaskmunich.workers.dev";
 const DEFAULTS = { token: "", pin: "1234", tournamentId: "auto", paged: false, perPage: 8,
-  shortOn: true, shortWins: 1, fullFrom: "final" };
+  shortOn: true, shortWins: 1, fullFrom: "final",
+  useResults: true, useSignup: false, stationKey: "", siteUrl: DEFAULT_SITE };
 let cfg = Object.assign({}, DEFAULTS, load(LS) || {});
 function load(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } }
 function save(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
@@ -214,7 +238,8 @@ function demoInit(){
 /* ---------- Abfrage-Schleife ---------- */
 let polling = false, lastTournamentLoad = 0;
 async function poll(){
-  if (DEMO || polling || !cfg.token) return;
+  if (cfg.useSignup || DEMO) loadSignupTours(false);
+  if (DEMO || polling || !cfg.token || !cfg.useResults) return;
   polling = true;
   try {
     if (!tournament || Date.now() - lastTournamentLoad > 60000) { await loadTournament(); lastTournamentLoad = Date.now(); }
@@ -243,7 +268,15 @@ let failedItems = [];
 /* ---------- Statuszeile ---------- */
 function renderBar(){
   const dot = $("dot"), s = $("status");
+  renderTabs(); signupIdleCheck();
   let cls = "dot", txt;
+  if (mode === "signup" && !["settings", "pin"].includes(st.s)) {
+    const t = signupTours.find(x => x.id === signupForm.eventId);
+    if (DEMO) { cls += " ok"; txt = "Demo-Modus · Turnieranmeldung"; }
+    else if (signupErr) { cls += " err"; txt = signupErr; }
+    else { cls += " ok"; txt = "Turnieranmeldung" + (t ? " · " + t.title : ""); }
+    dot.className = cls; s.textContent = txt; $("banner").innerHTML = ""; return;
+  }
   if (DEMO) { cls += " ok"; txt = "Demo-Modus · " + (tournament ? tournament.name : ""); }
   else if (!cfg.token) { cls += " err"; txt = "Nicht eingerichtet"; }
   else if (authErr) { cls += " err"; txt = "Token ungültig – Einstellungen prüfen"; }
@@ -268,6 +301,9 @@ function layout(n, paged){
 function render(){
   renderBar();
   const body = $("body");
+  body.classList.toggle("settings", st.s === "settings" || st.s === "signup");
+  if (st.s === "signup") return renderSignup(body);
+  if (st.s === "signupDone") return renderSignupDone(body);
   if (st.s === "tables") return renderTables(body);
   if (st.s === "sets") return renderSets(body);
   if (st.s === "done") return renderDone(body);
@@ -275,7 +311,7 @@ function render(){
   if (st.s === "settings") return renderSettings(body);
 }
 function renderTables(body){
-  if (!DEMO && !cfg.token) { st = { s: "settings" }; return render(); }
+  if (needsSetup()) { st = { s: "settings" }; return render(); }
   const open = matches;
   const pg = cfg.paged && open.length > cfg.perPage, pages = pg ? Math.ceil(open.length / cfg.perPage) : 1;
   if (page >= pages) page = pages - 1; if (page < 0) page = 0;
@@ -371,11 +407,19 @@ function renderPin(body){
     else if (digits.length < 8) { st.pin = digits + k; st.err = ""; }
     render();
   });
-  $("pinCancel").onclick = () => { st = { s: "tables" }; render(); };
+  $("pinCancel").onclick = () => goMain();
 }
 function renderSettings(body){
   body.classList.add("settings");
   body.innerHTML = `<h2>Einstellungen</h2>
+  <h3>Bereiche auf diesem Gerät</h3>
+  <div class="fld"><label for="useResults">Ergebnisse eintragen (Kickertool)</label><input type="checkbox" id="useResults" ${cfg.useResults ? "checked" : ""}></div>
+  <div class="fld"><label for="useSignup">Turnieranmeldung (Website)</label><input type="checkbox" id="useSignup" ${cfg.useSignup ? "checked" : ""}></div>
+  <div class="hint">Sind beide an, gibt es oben zwei Reiter zum Umschalten.</div>
+  <h3>Turnieranmeldung (Website)</h3>
+  <div class="fld"><label for="stKey">Stations-Schlüssel</label><input type="password" id="stKey" autocomplete="off" placeholder="${cfg.stationKey ? "gespeichert – zum Ändern neu eingeben" : "STATION_KEY aus Cloudflare"}"></div>
+  <div class="fld"><label for="siteUrl">Website-Adresse</label><input type="text" id="siteUrl" autocomplete="off" autocapitalize="off" value="${esc(cfg.siteUrl || DEFAULT_SITE)}"></div>
+  <div class="hint">Testphase: ${esc(DEFAULT_SITE)} · nach dem Livegang: https://www.klaskmunich.de</div>
   <h3>Verbindung zu Kickertool</h3>
   <div class="fld"><label for="tok">API-Token</label><input type="password" id="tok" autocomplete="off" placeholder="${cfg.token ? "gespeichert – zum Ändern neu einfügen" : "aus Kickertool → Einstellungen → API"}"></div>
   <div class="hint">Der Token wird nur auf diesem Gerät gespeichert.</div>
@@ -393,7 +437,7 @@ function renderSettings(body){
   <h3>Sicherheit</h3>
   <div class="fld"><label for="pinIn">PIN für Einstellungen</label><input type="text" inputmode="numeric" id="pinIn" value="${esc(cfg.pin)}" style="min-width:10rem"></div>
   <div class="err" id="setErr" style="flex:none;text-align:left;min-height:1.6rem"></div>
-  <div class="foot" style="margin-top:1rem"><div class="cb btn" id="setCancel">${cfg.token ? "Abbrechen" : ""}</div><div class="cb btn go" id="setSave">Speichern</div></div>`;
+  <div class="foot" style="margin-top:1rem"><div class="cb btn" id="setCancel">${needsSetup() ? "" : "Abbrechen"}</div><div class="cb btn go" id="setSave">Speichern</div></div>`;
   let selTour = cfg.tournamentId || "auto", tourList = [];
   const fill = () => {
     if (selTour !== "auto" && !tourList.some(t => t.id === selTour)) tourList = tourList.concat([{ id: selTour, name: "Gespeichertes Turnier (läuft nicht mehr?)" }]);
@@ -427,11 +471,28 @@ function renderSettings(body){
     } catch (e) { msg.textContent = "Auf dem PC liegt gerade kein Token bereit"; }
   };
   if (cfg.token && !DEMO) loadList();
-  $("setCancel").onclick = () => { if (!cfg.token) return; body.classList.remove("settings"); st = { s: "tables" }; render(); };
+  $("setCancel").onclick = () => { if (needsSetup()) return; goMain(); };
   $("setSave").onclick = async () => {
     const tok = $("tok").value.trim();
-    if (!tok && !cfg.token && !DEMO) { $("setErr").textContent = "Bitte API-Token eingeben"; return; }
-    if (tok) {
+    const useResults = $("useResults").checked, useSignup = $("useSignup").checked;
+    const key = $("stKey").value.trim(), site = ($("siteUrl").value.trim() || DEFAULT_SITE).replace(/\/+$/, "");
+    if (!useResults && !useSignup) { $("setErr").textContent = "Mindestens einen Bereich einschalten"; return; }
+    if (useResults && !tok && !cfg.token && !DEMO) { $("setErr").textContent = "Bitte Kickertool-API-Token eingeben"; return; }
+    if (useSignup && !key && !cfg.stationKey && !DEMO) { $("setErr").textContent = "Bitte Stations-Schlüssel eingeben"; return; }
+    if (!/^https:\/\/|^http:\/\/localhost/.test(site)) { $("setErr").textContent = "Website-Adresse muss mit https:// beginnen"; return; }
+    if (useSignup && (key || site !== cfg.siteUrl) && !DEMO) {
+      const oldSite = cfg.siteUrl; cfg.siteUrl = site;
+      try { await siteApi("/api/station/tournaments", {}, key || cfg.stationKey); }
+      catch (e) {
+        cfg.siteUrl = oldSite;
+        $("setErr").textContent = e.status === 401 ? "Stations-Schlüssel falsch" : e.status === 503 ? "Auf der Website ist noch kein Stations-Schlüssel eingerichtet" : "Website nicht erreichbar – Adresse prüfen";
+        return;
+      }
+    }
+    cfg.useResults = useResults; cfg.useSignup = useSignup; cfg.siteUrl = site;
+    if (key) cfg.stationKey = key;
+    signupLoaded = 0; signupErr = "";
+    if (tok && useResults) {
       const old = cfg.token; cfg.token = tok;
       try { await api("/hello"); } catch (e) { cfg.token = old; $("setErr").textContent = e.status ? "Token ungültig" : "Keine Verbindung – Token nicht geprüft"; if (e.status) return; cfg.token = tok; }
     }
@@ -439,8 +500,168 @@ function renderSettings(body){
     cfg.shortOn = $("shortOn").checked; cfg.shortWins = +$("shortWins").value; cfg.fullFrom = $("fullFrom").value;
     const p = $("pinIn").value.trim(); cfg.pin = /^\d{1,8}$/.test(p) ? p : cfg.pin;
     saveCfg(); tournament = null; lastTournamentLoad = 0; authErr = false;
-    body.classList.remove("settings"); st = { s: "tables" }; page = 0; render(); poll();
+    page = 0; goMain(); poll();
   };
+}
+
+/* ---------- Bereiche: Ergebnisse / Turnieranmeldung ---------- */
+let mode = "results";
+function needsSetup(){
+  if (DEMO) return false;
+  if (!cfg.useResults && !cfg.useSignup) return true;
+  return (cfg.useResults && !cfg.token) || (cfg.useSignup && !cfg.stationKey);
+}
+function goMain(m){
+  if (m) mode = m;
+  if (mode === "signup" && !cfg.useSignup && !DEMO) mode = "results";
+  if (mode === "results" && !cfg.useResults && !DEMO) mode = "signup";
+  st = mode === "signup" ? { s: "signup", err: "" } : { s: "tables" };
+  if (mode === "signup") loadSignupTours(false);
+  render();
+}
+function renderTabs(){
+  const el = $("tabs"), both = DEMO || (cfg.useResults && cfg.useSignup);
+  if (!both || !unlocked() || ["settings", "pin"].includes(st.s)) { el.innerHTML = ""; return; }
+  const html = `<div class="cb tab${mode === "results" ? " on" : ""}" data-m="results">Ergebnis eintragen</div><div class="cb tab${mode === "signup" ? " on" : ""}" data-m="signup">Turnieranmeldung</div>`;
+  if (el.dataset.h === html) return;
+  el.dataset.h = html; el.innerHTML = html;
+  el.querySelectorAll(".tab").forEach(t => t.onclick = () => {
+    if (t.dataset.m === mode && (st.s === "tables" || st.s === "signup")) return;
+    if (st.s === "sets" && !confirm("Eingabe abbrechen?")) return;
+    goMain(t.dataset.m);
+  });
+}
+
+/* ---------- Turnieranmeldung (Website-Datenbank) ---------- */
+const SITE = () => (cfg.siteUrl || DEFAULT_SITE).trim().replace(/\/+$/, "");
+let signupTours = [], signupErr = "", signupLoaded = 0;
+const newForm = eventId => ({ eventId: eventId || "", firstName: "", lastName: "", email: "", level: "einsteiger", ranking: "",
+  resultsMail: false, showPublic: false, consent: false, t: Date.now() });
+let signupForm = newForm();
+async function siteApi(path, opts = {}, key){
+  const headers = { "X-Station-Key": key || cfg.stationKey };
+  if (opts.body) headers["Content-Type"] = "application/json";
+  const r = await fetch(SITE() + path, Object.assign({}, opts, { headers }));
+  let j = null; try { j = await r.json(); } catch (e) {}
+  if (!r.ok || (j && j.ok === false)) throw Object.assign(new Error((j && j.error) || "HTTP " + r.status), { status: r.status, code: j && j.code });
+  return j;
+}
+async function loadSignupTours(force){
+  if (DEMO) {
+    if (!signupTours.length) {
+      const d = new Date(), iso = d.toISOString().slice(0, 10);
+      signupTours = [{ id: "demo-1", title: "Monthly KLASK x PLAY DATE (Demo)", date: iso, start: d.toISOString(), today: true, location: "Pineapple Park München", maxPlayers: 32, confirmed: 27, waitlist: 0 },
+        { id: "demo-2", title: "Monthly KLASK (Demo)", date: "2027-01-21", start: "2027-01-21T17:00:00.000Z", today: false, location: "Pineapple Park München", maxPlayers: 32, confirmed: 3, waitlist: 0 }];
+    }
+  } else {
+    if (!cfg.useSignup || !cfg.stationKey) return;
+    if (!force && Date.now() - signupLoaded < 300000) return;
+    signupLoaded = Date.now();
+    try { const j = await siteApi("/api/station/tournaments"); signupTours = (j && j.tournaments) || []; signupErr = ""; }
+    catch (e) { signupErr = e.status === 401 ? "Stations-Schlüssel ungültig – Einstellungen prüfen" : "Keine Verbindung zur Website"; signupLoaded = Date.now() - 270000; }
+  }
+  if (!signupTours.some(t => t.id === signupForm.eventId)) { const t = signupTours.find(x => x.today) || signupTours[0]; signupForm.eventId = t ? t.id : ""; }
+  if (st.s === "signup") render(); else renderBar();
+}
+function signupIdleCheck(){
+  const f = signupForm;
+  if (st.s === "signup" && (f.firstName || f.lastName || f.email) && Date.now() - f.t > 180000) { signupForm = newForm(f.eventId); render(); }
+}
+function fmtWhen(t){
+  try { return new Date(t.start).toLocaleString("de-DE", { weekday: "short", day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Berlin" }) + " Uhr"; }
+  catch (e) { return t.date; }
+}
+const RANK_OPTS = [["full", "Ja, mit vollem Namen"], ["initial", "Ja, nur Vorname + Initiale"], ["none", "Nein, nicht im Ranking"]];
+const LEVELS = [["einsteiger", "Einsteiger:in"], ["fortgeschritten", "Fortgeschritten"], ["profi", "Profi"]];
+function renderSignup(body){
+  if (needsSetup()) { st = { s: "settings" }; return render(); }
+  const f = signupForm, t = signupTours.find(x => x.id === f.eventId);
+  const scroll = body.scrollTop;
+  const chk = (key, text) => `<div class="chk${f[key] ? " on" : ""}" data-chk="${key}"><div class="box">${f[key] ? `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg>` : ""}</div><div>${text}</div></div>`;
+  const free = t ? t.maxPlayers - t.confirmed : 0;
+  body.innerHTML = `<div class="su">
+    <div class="h1">Turnieranmeldung</div>
+    ${!signupTours.length ? `<div class="empty" style="margin:2rem 0">${signupErr ? esc(signupErr) : "Gerade ist kein Turnier zur Anmeldung offen."}</div>` : `
+    ${t ? `<div class="tcard"><div><div class="t1">${esc(t.title)}</div><div class="t2">${esc(fmtWhen(t))}${t.location ? " · " + esc(t.location.split(",")[0]) : ""}</div></div>
+      <div class="cap">${free > 0 ? `${t.confirmed} / ${t.maxPlayers} Plätze` : `Voll – Warteliste (${t.waitlist})`}</div></div>` : ""}
+    ${signupTours.length > 1 ? `<div class="tsel">${signupTours.map(x => `<div class="cb${x.id === f.eventId ? " on" : ""}" data-ev="${esc(x.id)}">${x.today ? "Heute" : esc(new Date(x.start).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "2-digit", timeZone: "Europe/Berlin" }))}</div>`).join("")}</div>` : ""}
+    <div class="row2"><div><div class="lbl">Vorname</div><input type="text" id="suFirst" maxlength="40" autocomplete="off" autocapitalize="words" value="${esc(f.firstName)}"></div>
+      <div><div class="lbl">Nachname</div><input type="text" id="suLast" maxlength="60" autocomplete="off" autocapitalize="words" value="${esc(f.lastName)}"></div></div>
+    <div class="lbl">E-Mail (für Bestätigung und Abmeldelink)</div><input type="email" id="suMail" maxlength="254" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" inputmode="email" value="${esc(f.email)}">
+    <div class="lbl">Spielstärke</div><div class="seg">${LEVELS.map(([v, l]) => `<div class="cb${f.level === v ? " on" : ""}" data-level="${v}">${l}</div>`).join("")}</div>
+    <div class="lbl">Im IKA-Ranking auf klaskranking.com erscheinen?</div><div class="seg">${RANK_OPTS.map(([v, l]) => `<div class="cb${f.ranking === v ? " on" : ""}" data-rank="${v}">${l}</div>`).join("")}</div>
+    ${f.ranking === "full" || f.ranking === "initial" ? `<div class="legal" style="margin-left:0;margin-top:.6rem">Ich bin damit einverstanden, dass mein Vor- und Nachname im Rahmen des Rankings auf klaskranking.com veröffentlicht wird und meine dafür erforderlichen Daten von den Betreibern der Plattform zu diesem Zweck verarbeitet werden. Dies schließt auch die Verarbeitung meiner E-Mail-Adresse ein; diese wird jedoch ausschließlich intern zur Zuordnung verwendet und nicht veröffentlicht. Die Einwilligungen sind freiwillig und können jederzeit mit Wirkung für die Zukunft per E-Mail an ikaklask@gmail.com widerrufen werden.</div>` : ""}
+    <div style="margin-top:.6rem">
+      ${chk("resultsMail", "Nach dem Turnier einmalig Ergebnisse &amp; nächste Termine per Mail")}
+      ${chk("showPublic", "In der Teilnehmerliste auf der Website als „Vorname N.“ erscheinen")}
+      ${chk("consent", "Ich habe die Datenschutzerklärung gelesen")}
+      <div class="legal">Wir speichern deine Angaben nur zur Turnierorganisation. Mehr in der Datenschutzerklärung: ${esc(SITE().replace(/^https?:\/\//, ""))}/datenschutz</div>
+    </div>`}
+    <div class="err" style="flex:none;min-height:2rem;margin-top:.6rem">${esc(st.err || "")}</div>
+    <div class="foot" style="margin-top:.4rem;padding-bottom:2rem"><div class="cb btn" id="suReset">Leeren</div>${signupTours.length ? `<div class="cb btn go${st.busy ? " busy" : ""}" id="suGo">${st.busy ? "Sende …" : "Anmelden"}</div>` : ""}</div>
+  </div>`;
+  body.scrollTop = scroll;
+  const bind = (id, key) => { const el = $(id); if (el) el.oninput = () => { f[key] = el.value; f.t = Date.now(); if (st.err) { st.err = ""; } }; };
+  bind("suFirst", "firstName"); bind("suLast", "lastName"); bind("suMail", "email");
+  body.querySelectorAll("[data-level]").forEach(el => el.onclick = () => { f.level = el.dataset.level; f.t = Date.now(); render(); });
+  body.querySelectorAll("[data-rank]").forEach(el => el.onclick = () => { f.ranking = el.dataset.rank; f.t = Date.now(); render(); });
+  body.querySelectorAll("[data-chk]").forEach(el => el.onclick = () => { f[el.dataset.chk] = !f[el.dataset.chk]; f.t = Date.now(); st.err = ""; render(); });
+  body.querySelectorAll("[data-ev]").forEach(el => el.onclick = () => { f.eventId = el.dataset.ev; render(); });
+  $("suReset").onclick = () => { signupForm = newForm(f.eventId); st.err = ""; render(); };
+  if ($("suGo")) $("suGo").onclick = submitSignup;
+}
+async function submitSignup(){
+  if (st.busy) return;
+  const f = signupForm;
+  f.firstName = f.firstName.trim(); f.lastName = f.lastName.trim(); f.email = f.email.trim();
+  const errs = [];
+  if (!f.firstName || !f.lastName) errs.push("Vor- und Nachname");
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email)) errs.push("gültige E-Mail");
+  if (!f.ranking) errs.push("Auswahl zum IKA-Ranking");
+  if (!f.consent) errs.push("Häkchen bei der Datenschutzerklärung");
+  if (errs.length) { st.err = "Bitte noch ausfüllen: " + errs.join(", "); return render(); }
+  const t = signupTours.find(x => x.id === f.eventId);
+  const payload = { eventId: f.eventId, firstName: f.firstName, lastName: f.lastName, email: f.email, ranking: f.ranking,
+    resultsMail: f.resultsMail, showPublic: f.showPublic, level: f.level, lang: "de", consent: true };
+  if (DEMO) {
+    const full = t && t.confirmed >= t.maxPlayers;
+    if (t) { if (full) t.waitlist++; else t.confirmed++; }
+    return showSignupDone({ status: full ? "waitlist" : "confirmed", nickname: f.firstName + " " + f.lastName.charAt(0).toUpperCase() + ".", mailSent: true }, f, t);
+  }
+  st.busy = true; render();
+  try {
+    const j = await siteApi("/api/station/register", { method: "POST", body: JSON.stringify(payload) });
+    if (t) { if (j.status === "waitlist") t.waitlist++; else t.confirmed++; }
+    loadSignupTours(true);
+    showSignupDone(j, f, t);
+  } catch (e) {
+    st.busy = false;
+    if (e.code === "already_registered") return showSignupDone({ already: true, nickname: f.firstName }, f, t);
+    st.err = e.status ? e.message : "Keine Verbindung zur Website – bitte nochmal versuchen.";
+    if (e.status === 401) signupErr = "Stations-Schlüssel ungültig – Turnierleitung holen";
+    render();
+  }
+}
+function showSignupDone(res, f, t){
+  signupForm = newForm(f.eventId);
+  st = { s: "signupDone", res, email: f.email, t };
+  render();
+  clearTimeout(showSignupDone.t);
+  showSignupDone.t = setTimeout(() => { if (st.s === "signupDone") goMain("signup"); }, 7000);
+}
+function renderSignupDone(body){
+  const { res, email, t } = st;
+  const title = res.already ? "Du bist schon angemeldet" : res.status === "waitlist" ? "Du stehst auf der Warteliste" : `Du bist dabei, ${res.nickname}!`;
+  const sub = res.already ? "Mit dieser E-Mail bist du für dieses Turnier schon angemeldet – alles gut."
+    : res.status === "waitlist" ? "Das Turnier ist gerade voll. Wird ein Platz frei, rückst du automatisch nach und bekommst eine Mail."
+    : (t ? esc(t.title) : "");
+  body.innerHTML = `<div class="done"><div class="check"><svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5l10 -10"/></svg></div>
+    <div class="big">${esc(title)}</div><div class="sub">${sub}</div>
+    ${!res.already && res.mailSent ? `<div class="small">Bestätigung mit Abmeldelink geht an ${esc(email)}</div>` : ""}
+    ${!res.already && res.mailSent === false ? `<div class="small">Anmeldung gespeichert – die Bestätigungsmail konnte gerade nicht verschickt werden.</div>` : ""}
+    <div class="small">Zurück zum Formular in ein paar Sekunden</div></div>`;
+  body.onclick = null;
+  setTimeout(() => { body.onclick = () => { if (st.s === "signupDone") { body.onclick = null; goMain("signup"); } }; }, 600);
 }
 
 /* ---------- Admin-Passwort (einmal pro Geraet) ---------- */
@@ -483,14 +704,15 @@ function renderLock(){
 /* ---------- Start ---------- */
 $("gear").onclick = () => {
   if (!unlocked() || st.s === "settings" || st.s === "pin") return;
-  st = (!cfg.token && !DEMO) ? { s: "settings" } : { s: "pin", pin: "", err: "" }; render();
+  st = needsSetup() ? { s: "settings" } : { s: "pin", pin: "", err: "" }; render();
 };
 window.addEventListener("resize", () => { if (unlocked() && st.s === "tables") render(); });
 let started = false;
 function start(){
   if (started) return; started = true;
   if (DEMO) demoInit();
-  render(); poll();
+  if (DEMO && new URLSearchParams(location.search).has("signup")) mode = "signup";
+  goMain(); poll();
   setInterval(poll, 5000);
   setInterval(renderBar, 1000);
 }
